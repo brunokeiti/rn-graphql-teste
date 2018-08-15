@@ -2,6 +2,7 @@ import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import Header from '../components/Header';
+import Item from '../components/Item';
 
 import ApolloClient from "apollo-boost";
 import { Query, ApolloProvider } from "react-apollo";
@@ -28,10 +29,7 @@ const ExchangeRates = () => (
       if (error) return <Text>Error :(</Text>;
 
       return data.buscaVeiculo.edges.map(({ node }) => (
-        <View key={node.modelo}>
-          <Text>{`${node.marca}`}</Text>
-          <Text>{`${node.modelo}`}</Text>
-        </View>
+        <Item node={node} key={node.modelo}/>
       ));
     }}
   </Query>
