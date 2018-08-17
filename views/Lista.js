@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, ScrollView } from 'react-native';
 
 import Header from '../components/Header';
 import Item from '../components/Item';
@@ -8,7 +8,7 @@ import ApolloClient from "apollo-boost";
 import { Query, ApolloProvider } from "react-apollo";
 import gql from "graphql-tag";
 
-const ExchangeRates = () => (
+const CriarLista = () => (
   <Query
     query={gql`
       query {
@@ -48,12 +48,11 @@ export default class Lista extends React.Component {
   render() {
     return (
       <View>
-        <Header
-          onPressBack={() => {}}
-          noBack={true}
-          title={this.state.title}
-        />
-        <ExchangeRates />
+        <Header onPressBack={() => {}} noBack={true}>
+        </Header>
+        <ScrollView contentContainerStyle={{padding:10,paddingTop:5,paddingBottom:20, backgroundColor:'transparent', flexDirection: 'column',}}>
+          <CriarLista />
+        </ScrollView>
       </View>
     );
   }

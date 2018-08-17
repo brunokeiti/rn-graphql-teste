@@ -32,12 +32,7 @@ export default class Header extends React.Component {
             </TouchableOpacity>
         }
         </View>
-        {
-          this.props.title != undefined &&
-          <Text style={styles.topBarTitle}>
-            {this.props.title}
-          </Text>
-        }
+        { this.props.children }
         <View style={styles.topBarRight}>
 
         </View>
@@ -52,18 +47,12 @@ const styles = StyleSheet.create({
 topBar: {
   backgroundColor: '#666666',
   flexDirection: 'row',
-  height:50 + Expo.Constants.statusBarHeight,
+  height:60 + Expo.Constants.statusBarHeight,
   padding:0,
   paddingTop: Expo.Constants.statusBarHeight,
   margin:0,
 },
-  topBarTitle: {
-    height:30,
-    marginTop:13,
-    margin:7,
-    color:'#ffffff',
-    fontSize: 20,
-  },
+
   topBarIcon: {
     height:50,
     width:50,
