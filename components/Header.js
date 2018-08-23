@@ -32,7 +32,12 @@ export default class Header extends React.Component {
             </TouchableOpacity>
         }
         </View>
-        { this.props.children }
+        {
+          this.props.title != undefined &&
+          <Text style={styles.topBarTitle}>
+            {this.props.title}
+          </Text>
+        }
         <View style={styles.topBarRight}>
 
         </View>
@@ -54,18 +59,25 @@ topBar: {
 },
 
   topBarIcon: {
-    height:50,
-    width:50,
+    height:60,
+    width:60,
   },
     topBarIconImage:{
       height:40,
       width:40,
-      margin:5,
+      margin:10,
     },
   topBarLeft: {
     flex: 1,
     flexDirection: 'row',
     justifyContent: 'flex-start',
+  },
+  topBarTitle: {
+    height:30,
+    marginTop:15,
+    margin:5,
+    color:'#ffffff',
+    fontSize: 20,
   },
   topBarRight: {
     flex: 1,

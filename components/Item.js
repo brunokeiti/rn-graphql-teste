@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet } from 'react-native';
 import { View, Text, TouchableOpacity, Image, Alert } from 'react-native';
+import { NavigationActions } from 'react-navigation';
 
 export default class Item extends React.Component {
   constructor ( props ){
@@ -8,7 +9,7 @@ export default class Item extends React.Component {
   }
   render() {
     return (
-      <TouchableOpacity style={styles.item}>
+      <TouchableOpacity style={styles.item} onPress={this.props.onPressItem}>
         <Text style={styles.itemMarca}>{`${this.props.node.marca}`}</Text>
         <Text style={styles.itemModelo}>{`${this.props.node.modelo}`}</Text>
       </TouchableOpacity>
