@@ -10,8 +10,8 @@ import { Query, ApolloProvider } from "react-apollo";
 import gql from "graphql-tag";
 
 const queryVeiculos = gql`
-  query {
-    buscaVeiculo{
+  query Busca($page:Int, $limit:Int){
+    buscaVeiculo(page:$page, limit:$limit){
       pageInfo{
         hasNextPage
         hasPreviousPage
@@ -27,6 +27,10 @@ const queryVeiculos = gql`
         }
       }
     }
+  }
+  {
+    "page":1,
+    "limit":20
   }
 `
 
