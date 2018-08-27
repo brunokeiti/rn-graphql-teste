@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { createStackNavigator } from 'react-navigation';
 import Lista from './views/Lista';
 import Detalhes from './views/Detalhes';
+import Editar from './views/Editar';
 
 import ApolloClient from "apollo-boost";
 import { Query, ApolloProvider } from "react-apollo";
@@ -18,6 +19,9 @@ const MainStackNavigator = createStackNavigator(
     },
     Detalhes: {
       screen: Detalhes,
+    },
+    Editar: {
+      screen: Editar,
     },
   },
   {

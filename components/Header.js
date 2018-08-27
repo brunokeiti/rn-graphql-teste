@@ -7,22 +7,16 @@ export default class Header extends React.Component {
   constructor ( props ){
     super ( props );
 
-    if (this.props.noBack != undefined && this.props.noBack == true){
-      this.state = {
-        backButton:false
-      };
-    }else{
-      this.state = {
-        backButton: true
-      };
-    }
+    this.state = {
+      backButton: this.props.backButton,
+    };
+
   }
   render() {
     return (
       <View style={styles.topBar}>
         <View style={styles.topBarLeft}>
-        {
-          this.state.backButton == true &&
+        {this.state.backButton == true &&
             <TouchableOpacity style={styles.topBarIcon} onPress={() => this.props.onPressBack()}>
               <Image
                 source={require('../img/icone_seta_esquerda.png')}
@@ -32,14 +26,26 @@ export default class Header extends React.Component {
             </TouchableOpacity>
         }
         </View>
-        {
-          this.props.title != undefined &&
+        {this.props.title != undefined &&
           <Text style={styles.topBarTitle}>
             {this.props.title}
           </Text>
         }
         <View style={styles.topBarRight}>
-
+          {this.props.rightButton != 'none' &&
+            <TouchableOpacity style={styles.topBarIcon} onPress={() => this.props.onPressRight()}>
+              {this.props.rightButton == 'add' &&
+                <Image
+                  source={require('../img/icone_add.png')}
+                  style={styles.topBarIconImage}
+                  resizeMode="contain"
+                />
+              }
+              {this.props.rightButton == 'edit' &&
+                <Text style={styles.buttonText}>Editar</Text>
+              }
+          </TouchableOpacity>
+          }
         </View>
       </View>
     )
@@ -74,7 +80,7 @@ topBar: {
   },
   topBarTitle: {
     height:30,
-    marginTop:15,
+    marginTop:18,
     margin:5,
     color:'#ffffff',
     fontSize: 20,
@@ -84,5 +90,12 @@ topBar: {
     flexDirection: 'row',
     justifyContent: 'flex-end',
     alignItems: 'center',
+  },
+  buttonText: {
+    color:'#ffffff',
+    fontSize: 14,
+    margin:'auto',
+    paddingTop:20,
+    paddingBottom:20,
   },
 });

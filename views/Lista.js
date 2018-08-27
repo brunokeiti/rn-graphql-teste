@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, TextInput, View, ScrollView } from 'react-native';
+import { StyleSheet, Text, TextInput, View, ScrollView, KeyboardAvoidingView } from 'react-native';
 import { NavigationActions } from 'react-navigation';
 
 import Header from '../components/Header';
@@ -10,8 +10,8 @@ import { Query, ApolloProvider } from "react-apollo";
 import gql from "graphql-tag";
 
 const queryVeiculos = gql`
-  query Busca($page:Int, $limit:Int){
-    buscaVeiculo(page:$page, limit:$limit){
+  query Busca($page:Int, $limit:Int, $query:String, $type:String){
+    buscaVeiculo(page:$page, limit:$limit, query:$query, type:$type){
       pageInfo{
         hasNextPage
         hasPreviousPage
@@ -28,10 +28,6 @@ const queryVeiculos = gql`
       }
     }
   }
-  {
-    "page":1,
-    "limit":20
-  }
 `
 
 export default class Lista extends React.Component {
@@ -41,14 +37,23 @@ export default class Lista extends React.Component {
     this.state = {
       title: 'Lista',
       loading: true,
-      searchBar: '',
+      page:1,
+      limit:20,
+      searchBar:'',
+      refetch:false,
     }
   }
 
   render() {
     return (
-      <View style={{flex:1}}>
-        <Header onPressBack={() => {}} noBack={true} title={this.state.title} />
+      <KeyboardAvoidingView behavior="padding" style={{flex: 1}}>
+        <Header
+          onPressBack={() => {}}
+          backButton={false}
+          title={this.state.title}
+          onPressRight={() => {this.props.navigation.navigate('Editar',{id:0})}}
+          rightButton={'add'}
+        />
         <View style={styles.searchBar}>
           <TextInput
             style={styles.searchInput}
@@ -58,17 +63,17 @@ export default class Lista extends React.Component {
           />
         </View>
         <ScrollView contentContainerStyle={{padding:10,paddingTop:5,paddingBottom:20, backgroundColor:'transparent', flexDirection: 'column',}}>
-          <Query query={queryVeiculos}>
+          <Query query={queryVeiculos} variables={{page:this.state.page, limit:this.state.limit, query:this.state.searchBar}} fetchPolicy={'cache-and-network'}>
             {({ loading, error, data }) => {
               if (loading) return <Text>Loading...</Text>;
               if (error) return <Text>Erro :(</Text>;
               return data.buscaVeiculo.edges.map(({ node }) => (
-                <Item node={node} key={node.modelo} onPressItem={() => {this.props.navigation.navigate('Detalhes')}}/>
+                <Item node={node} key={node._id} onPressItem={() => {this.props.navigation.navigate('Detalhes',{id:node._id})}}/>
               ));
             }}
           </Query>
         </ScrollView>
-      </View>
+      </KeyboardAvoidingView>
     );
   }
 }
@@ -89,9 +94,9 @@ const styles = StyleSheet.create({
   searchInput:{
     backgroundColor: '#ffffff',
     borderRadius: 10,
-    padding:5,
+    padding:10,
+    paddingTop:5,
+    paddingBottom:5,
     alignSelf: 'stretch',
   },
 });
-
-//<Item node={{marca:'teste',modelo:'teste'}} key={'node.modelo'} onPressItem={() => {this.props.navigation.navigate('Detalhes')}}/>
