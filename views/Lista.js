@@ -66,10 +66,6 @@ export default class Lista extends React.Component {
             {({ loading, error, data }) => {
               if (loading) return <Text>Loading...</Text>;
               if (error) return <Text>Erro :(</Text>;
-              if (this.state.refetch == 1){
-                refetch()
-                this.setState({refetch:0})
-              }
               return data.buscaVeiculo.edges.map(({ node }) => (
                 <Item node={node} key={node._id} onPressItem={() => {this.props.navigation.navigate('Detalhes',{id:node._id})}}/>
               ));
