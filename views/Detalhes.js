@@ -30,7 +30,6 @@ export default class Detalhes extends React.Component {
       title: 'Detalhes',
       loading: true,
       id: this.props.navigation.state.params.id,
-      refetch:false,
     }
   }
 
