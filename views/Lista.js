@@ -30,6 +30,11 @@ const queryVeiculos = gql`
   }
 `
 
+const isCloseToBottom = ({layoutMeasurement, contentOffset, contentSize}) => {
+  const paddingToBottom = 20;
+  return layoutMeasurement.height + contentOffset.y >= contentSize.height - paddingToBottom;
+};
+
 export default class Lista extends React.Component {
 
   constructor ( props ){
@@ -37,13 +42,13 @@ export default class Lista extends React.Component {
     this.state = {
       title: 'Lista',
       loading: true,
-      page:1,
-      limit:20,
       searchBar:'',
+      limitItem:10,
     }
   }
 
   render() {
+    var pageCount = 1;
     return (
       <KeyboardAvoidingView behavior="padding" style={{flex: 1}}>
         <Header
@@ -61,8 +66,17 @@ export default class Lista extends React.Component {
             onChangeText={(searchBar) => {this.setState({searchBar})}}
           />
         </View>
-        <ScrollView contentContainerStyle={{padding:10,paddingTop:5,paddingBottom:20, backgroundColor:'transparent', flexDirection: 'column',}}>
-          <Query query={queryVeiculos} variables={{page:this.state.page, limit:this.state.limit, query:this.state.searchBar}} fetchPolicy={'cache-and-network'}>
+        <ScrollView
+          contentContainerStyle={{padding:10,paddingTop:5,paddingBottom:20, backgroundColor:'transparent', flexDirection: 'column',}}
+          onScroll={({nativeEvent}) => {
+            if (isCloseToBottom(nativeEvent)) {
+
+            }
+          }}
+          scrollEventThrottle={400}
+          >
+
+          <Query query={queryVeiculos} variables={{page:pageCount, limit:this.state.limitItem, query:this.state.searchBar}} fetchPolicy={'cache-and-network'}>
             {({ loading, error, data }) => {
               if (loading) return <Text>Loading...</Text>;
               if (error) return <Text>Erro :(</Text>;
@@ -71,6 +85,7 @@ export default class Lista extends React.Component {
               ));
             }}
           </Query>
+
         </ScrollView>
       </KeyboardAvoidingView>
     );
