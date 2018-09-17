@@ -44,12 +44,14 @@ export default class Lista extends React.Component {
       title: 'Lista',
       loading: true,
       searchBar:'',
-      limitItem:10,
+      limit:20,
+      page:1,
     }
   }
 
   render() {
-    var pageCount = 1;
+    var page = 1;
+    var nextPage = true;
 
     return (
       <KeyboardAvoidingView behavior="padding" style={{flex: 1}}>
@@ -68,9 +70,9 @@ export default class Lista extends React.Component {
             onChangeText={(searchBar) => {this.setState({searchBar})}}
           />
         </View>
-        <View style={{padding:10,paddingTop:5,paddingBottom:20, backgroundColor:'transparent', flexDirection: 'column', flex:1}}>
+        <View style={{padding:10,paddingTop:5,paddingBottom:5, backgroundColor:'transparent', flexDirection: 'column', flex:1}}>
 
-          <Query query={queryVeiculos} variables={{page:this.state.page, limit:this.state.limit, query:this.state.searchBar}} fetchPolicy={'cache-and-network'}>
+          <Query query={queryVeiculos} variables={{page:page, limit:this.state.limit, query:this.state.searchBar}} fetchPolicy={'cache-and-network'}>
             {({ loading, error, data, fetchMore }) => {
               if (loading) return <Text>Loading...</Text>;
               if (error) return <Text>Erro :(</Text>;
@@ -80,17 +82,21 @@ export default class Lista extends React.Component {
                   data={data.buscaVeiculo.edges}
                   keyExtractor={(item, index) => item.node._id}
                   onEndReachedThreshold={1}
-                  onEndReached={(xxx) => {
-                    this.setState({page: this.state.page + 1})
-                    console.log(this.state.page);
-                    fetchMore({
-                      variables:{page:this.state.page},
-                      updateQuery: (previousResult, { fetchMoreResult }) => {
-                        if (!fetchMoreResult) return previousResult;
-                      }
-                    });
-                  }}
-                  renderItem={({item}) => <Item node={item.node}  onPressItem={() => {this.props.navigation.navigate('Detalhes',{id:item.node._id})}}/>}
+                  onEndReached={() => {
+                    if (nextPage) {
+                      page++
+                      console.log(page + ' ' + nextPage);
+                      fetchMore({
+                        variables:{page:page, limit:this.state.limit, query:this.state.searchBar},
+                        updateQuery: (previousResult, { fetchMoreResult }) => {
+                          nextPage = fetchMoreResult.buscaVeiculo.edges.hasNextPage;
+                          //fetchMoreResult.buscaVeiculo.edges.concat(previousResult.buscaVeiculo.edges);
+                          console.log(fetchMoreResult.buscaVeiculo.edges);
+                          return fetchMoreResult.buscaVeiculo.edges
+                        }
+                      });
+                  }}}
+                  renderItem={({item}) => <Item node={item.node} onPressItem={() => {this.props.navigation.navigate('Detalhes',{id:item.node._id})}}/>}
                 />
               )
             }}

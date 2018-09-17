@@ -1,6 +1,6 @@
 import React from 'react';
-import { StyleSheet, Text, TextInput, View, CheckBox, TouchableOpacity, ScrollView, KeyboardAvoidingView } from 'react-native';
-import { NavigationActions } from 'react-navigation';
+import { StyleSheet, Text, TextInput, View, CheckBox, TouchableOpacity, ScrollView, KeyboardAvoidingView, Picker } from 'react-native';
+import { NavigationActions, StackActions } from 'react-navigation';
 
 import Header from '../components/Header';
 
@@ -43,6 +43,27 @@ const detalhesVeiculo = gql`
     }
   }
 `
+
+const MarcaLista = gql`
+{
+   __type(name: "MarcaType") {
+     enumValues {
+       name
+     }
+   }
+}
+`
+
+const CombustivelLista = gql`
+{
+   __type(name: "CombustivelType") {
+     enumValues {
+       name
+     }
+   }
+}
+`
+
 const editarVeiculo = gql`
   mutation editarVeiculo($data:JSON!, $id:ID!) {
     updateVeiculo(data:$data, id:$id)
@@ -58,6 +79,11 @@ const apagarVeiculo = gql`
     deleteVeiculo(id:$id)
   }
 `
+
+const resetAction = StackActions.reset({
+  index: 0,
+  actions: [NavigationActions.navigate({ routeName: 'Lista' })],
+});
 
 export default class Editar extends React.Component {
   constructor ( props ){
@@ -90,10 +116,34 @@ export default class Editar extends React.Component {
             {({ loading, error, data }) => {
               if (loading) return <Text>Loading...</Text>;
               if (error) return <Text>Erro :(</Text>;
+              if (this.state.marca == '' || this.state.marca == null){ this.state.marca = data.veiculo.marca;}
+              if (this.state.combustivel == '' || this.state.combustivel == null){ this.state.combustivel = data.veiculo.combustivel;}
               return (
                 <View>
                   <Text style={styles.label}>Marca</Text>
-                  <TextInput style={styles.input} defaultValue={`${data.veiculo.marca}`} onChangeText={(marca) => this.setState({marca})}/>
+                  <Query query={MarcaLista}>
+                  {({ loading, error, data }) => {
+                    if (loading) return <Text>Loading...</Text>;
+                    if (error) return <Text>Erro</Text>;
+                    return (
+                      <Picker
+                        style={styles.picker}
+                        selectedValue={this.state.marca}
+                        onValueChange={(marca) => this.setState({marca})}>
+                        { Array.isArray(data.__type.enumValues) && data.__type.enumValues.map((itemLista,j) => {
+                          return(
+                            <Picker.Item
+                              label={itemLista.name}
+                              value={itemLista.name}
+                              key={itemLista.name}
+                            />
+                          )
+                        })}
+                      </Picker>
+                    )
+                  }}
+                  </Query>
+
                   <Text style={styles.label}>Modelo</Text>
                   <TextInput style={styles.input} defaultValue={`${data.veiculo.modelo}`} onChangeText={(modelo) => this.setState({modelo})}/>
                   <Text style={styles.label}>Ano / Fabricação</Text>
@@ -101,7 +151,28 @@ export default class Editar extends React.Component {
                   <Text style={styles.label}>Ano / Modelo</Text>
                   <TextInput style={styles.input} defaultValue={`${data.veiculo.ano_modelo}`} onChangeText={(ano_modelo) => this.setState({ano_modelo})}/>
                   <Text style={styles.label}>Tipo Combustível</Text>
-                  <TextInput style={styles.input} defaultValue={`${data.veiculo.combustivel}`} onChangeText={(combustivel) => this.setState({combustivel})}/>
+                  <Query query={CombustivelLista}>
+                  {({ loading, error, data }) => {
+                    if (loading) return <Text>Loading...</Text>;
+                    if (error) return <Text>Erro</Text>;
+                    return (
+                      <Picker
+                        style={styles.picker}
+                        selectedValue={this.state.combustivel}
+                        onValueChange={(combustivel) => this.setState({combustivel})}>
+                        { Array.isArray(data.__type.enumValues) && data.__type.enumValues.map((itemLista,j) => {
+                          return(
+                            <Picker.Item
+                              label={itemLista.name}
+                              value={itemLista.name}
+                              key={itemLista.name}
+                            />
+                          )
+                        })}
+                      </Picker>
+                    )
+                  }}
+                  </Query>
                   <Text style={styles.label}>Cor</Text>
                   <TextInput style={styles.input} defaultValue={`${data.veiculo.cor}`} onChangeText={(cor) => this.setState({cor})}/>
                   <Text style={styles.label}>Usado</Text>
@@ -148,7 +219,7 @@ export default class Editar extends React.Component {
                           id:this.state.id
                         }
                       })
-                      this.props.navigation.navigate('Lista')
+                      this.props.navigation.dispatch(resetAction);
                     }}>
                       <Text style={styles.buttonText}>Apagar veiculo</Text>
                     </TouchableOpacity>
@@ -163,7 +234,28 @@ export default class Editar extends React.Component {
         {this.state.id == 0 && //Adicionar
           <View>
             <Text style={styles.label}>Marca</Text>
-            <TextInput style={styles.input} onChangeText={(marca) => this.setState({marca})}/>
+            <Query query={MarcaLista}>
+            {({ loading, error, data }) => {
+              if (loading) return <Text>Loading...</Text>;
+              if (error) return <Text>Erro</Text>;
+              return (
+                <Picker
+                  style={styles.picker}
+                  selectedValue={this.state.marca}
+                  onValueChange={(marca) => this.setState({marca})}>
+                  { Array.isArray(data.__type.enumValues) && data.__type.enumValues.map((itemLista,j) => {
+                    return(
+                      <Picker.Item
+                        label={itemLista.name}
+                        value={itemLista.name}
+                        key={itemLista.name}
+                      />
+                    )
+                  })}
+                </Picker>
+              )
+            }}
+            </Query>
             <Text style={styles.label}>Modelo</Text>
             <TextInput style={styles.input} onChangeText={(modelo) => this.setState({modelo})}/>
             <Text style={styles.label}>Ano / Fabricação</Text>
@@ -171,7 +263,28 @@ export default class Editar extends React.Component {
             <Text style={styles.label}>Ano / Modelo</Text>
             <TextInput style={styles.input} onChangeText={(ano_modelo) => this.setState({ano_modelo})}/>
             <Text style={styles.label}>Tipo Combustível</Text>
-            <TextInput style={styles.input} onChangeText={(combustivel) => this.setState({combustivel})}/>
+            <Query query={CombustivelLista}>
+            {({ loading, error, data }) => {
+              if (loading) return <Text>Loading...</Text>;
+              if (error) return <Text>Erro</Text>;
+              return (
+                <Picker
+                  style={styles.picker}
+                  selectedValue={this.state.combustivel}
+                  onValueChange={(combustivel) => this.setState({combustivel})}>
+                  { Array.isArray(data.__type.enumValues) && data.__type.enumValues.map((itemLista,j) => {
+                    return(
+                      <Picker.Item
+                        label={itemLista.name}
+                        value={itemLista.name}
+                        key={itemLista.name}
+                      />
+                    )
+                  })}
+                </Picker>
+              )
+            }}
+            </Query>
             <Text style={styles.label}>Cor</Text>
             <TextInput style={styles.input} onChangeText={(cor) => this.setState({cor})}/>
             <Text style={styles.label}>Usado</Text>
@@ -194,7 +307,7 @@ export default class Editar extends React.Component {
                     },
                   }
                 })
-                this.props.navigation.dispatch(NavigationActions.back())
+                this.props.navigation.dispatch(resetAction);
               }}>
                 <Text style={styles.buttonText}>Criar veiculo</Text>
               </TouchableOpacity>
@@ -248,3 +361,5 @@ const styles = StyleSheet.create({
       fontSize: 18,
     },
 });
+
+//<TextInput style={styles.input} defaultValue={`${data.veiculo.marca}`} onChangeText={(marca) => this.setState({marca})}/>
