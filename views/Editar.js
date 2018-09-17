@@ -361,5 +361,3 @@ const styles = StyleSheet.create({
       fontSize: 18,
     },
 });
-
-//<TextInput style={styles.input} defaultValue={`${data.veiculo.marca}`} onChangeText={(marca) => this.setState({marca})}/>
