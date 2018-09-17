@@ -85,9 +85,13 @@ export default class Lista extends React.Component {
                     this.setState({page: this.state.page + 1})
                     console.log(this.state.page);
                     fetchMore({
-                      variables:{page:this.state.page},
+                      variables:{page:this.state.page, limit:this.state.limit, query:this.state.searchBar},
                       updateQuery: (previousResult, { fetchMoreResult }) => {
-                        if (!fetchMoreResult) return previousResult;
+                        //if (!fetchMoreResult) return previousResult;
+                        if (previousResult.buscaVeiculo.pageInfo.hasNextPage){
+                          console.log(previousResult.buscaVeiculo.pageInfo.hasNextPage)
+                          return fetchMoreResult;
+                        }
                       }
                     });
                   }}

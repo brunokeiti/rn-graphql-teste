@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, TextInput, View, CheckBox, TouchableOpacity, ScrollView, KeyboardAvoidingView } from 'react-native';
-import { NavigationActions } from 'react-navigation';
+import { NavigationActions, StackActions } from 'react-navigation';
 
 import Header from '../components/Header';
 
@@ -58,6 +58,11 @@ const apagarVeiculo = gql`
     deleteVeiculo(id:$id)
   }
 `
+
+const resetAction = StackActions.reset({
+  index: 0,
+  actions: [NavigationActions.navigate({ routeName: 'Lista' })],
+});
 
 export default class Editar extends React.Component {
   constructor ( props ){
@@ -148,7 +153,7 @@ export default class Editar extends React.Component {
                           id:this.state.id
                         }
                       })
-                      this.props.navigation.navigate('Lista')
+                      this.props.navigation.dispatch(resetAction);
                     }}>
                       <Text style={styles.buttonText}>Apagar veiculo</Text>
                     </TouchableOpacity>
@@ -194,7 +199,7 @@ export default class Editar extends React.Component {
                     },
                   }
                 })
-                this.props.navigation.dispatch(NavigationActions.back())
+                this.props.navigation.dispatch(resetAction);
               }}>
                 <Text style={styles.buttonText}>Criar veiculo</Text>
               </TouchableOpacity>
