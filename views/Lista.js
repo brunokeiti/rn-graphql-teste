@@ -83,21 +83,17 @@ export default class Lista extends React.Component {
                   keyExtractor={(item, index) => item.node._id}
                   onEndReachedThreshold={1}
                   onEndReached={() => {
-                    if (nextPage) {
-                      page++
-                      console.log(page + ' ' + nextPage);
-                      fetchMore({
-                        variables:{page:page, limit:this.state.limit, query:this.state.searchBar},
-                        updateQuery: (previousResult, { fetchMoreResult }) => {
-                          nextPage = fetchMoreResult.buscaVeiculo.edges.hasNextPage;
-                          var resultadoCombinado = previousResult.buscaVeiculo.edges.concat(fetchMoreResult.buscaVeiculo.edges);
-                          console.log(resultadoCombinado);
-                          return resultadoCombinado
+                    page++
+                    console.log(page + ' ' + nextPage);
+                    fetchMore({
+                      variables:{page:page},
+                      updateQuery: (previousResult, { fetchMoreResult }) => {
+                        if (!fetchMoreResult || fetchMoreResult.length === 0) {
+                          return previousResult;
                         }
-                      });
-                    }else{
-                      return null
-                    }
+                        return previousResult.buscaVeiculo.edges.concat(fetchMoreResult.buscaVeiculo.edges);
+                      }
+                    });
                   }}
                   renderItem={({item}) => <Item node={item.node} onPressItem={() => {this.props.navigation.navigate('Detalhes',{id:item.node._id})}}/>}
                 />
