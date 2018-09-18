@@ -1,9 +1,10 @@
 import React from 'react';
-import { StyleSheet, Text, TextInput, View, ScrollView, ListView, KeyboardAvoidingView, FlatList } from 'react-native';
+import { StyleSheet, Text, TextInput, View, ScrollView, KeyboardAvoidingView } from 'react-native';
 import { NavigationActions } from 'react-navigation';
 
 import Header from '../components/Header';
 import Item from '../components/Item';
+import Loading from  '../components/Loading';
 
 import ApolloClient from "apollo-boost";
 import { Query, ApolloProvider } from "react-apollo";
@@ -21,9 +22,9 @@ const queryVeiculos = gql`
       total
       edges{
         node{
+          _id
           marca
           modelo
-          _id
         }
       }
     }
@@ -46,13 +47,17 @@ export default class Lista extends React.Component {
       searchBar:'',
       limit:20,
       page:1,
+      data:'',
     }
   }
 
   render() {
-    var page = 1;
-    var nextPage = true;
-
+    var page = this.state.page;
+    var dataArray = [];
+    for (i = 0; i < this.state.page; i++){
+      dataArray.push({});
+    }
+    var lastPage = '';
     return (
       <KeyboardAvoidingView behavior="padding" style={{flex: 1}}>
         <Header
@@ -67,41 +72,49 @@ export default class Lista extends React.Component {
             style={styles.searchInput}
             value={this.state.searchBar}
             underlineColorAndroid={'transparent'}
-            onChangeText={(searchBar) => {this.setState({searchBar})}}
+            onChangeText={(searchBar) => {
+              this.setState({searchBar});
+              this.setState({page:1});
+            }}
           />
         </View>
-        <View style={{padding:10,paddingTop:5,paddingBottom:5, backgroundColor:'transparent', flexDirection: 'column', flex:1}}>
+        <ScrollView style={{padding:10,paddingTop:5,paddingBottom:5, backgroundColor:'transparent', flexDirection: 'column', flex:1}}
+          onScroll={({nativeEvent}) => {
+            if (isCloseToBottom(nativeEvent)) {
+              page++;
+              this.setState({page:page})
+            }
+          }}
+          scrollEventThrottle={400}
+        >
 
-          <Query query={queryVeiculos} variables={{page:page, limit:this.state.limit, query:this.state.searchBar}} fetchPolicy={'cache-and-network'}>
-            {({ loading, error, data, fetchMore }) => {
-              if (loading) return <Text>Loading...</Text>;
-              if (error) return <Text>Erro</Text>;
-              //console.log(data.buscaVeiculo.edges);
-              return (
-                <FlatList
-                  data={data.buscaVeiculo.edges}
-                  keyExtractor={(item, index) => item.node._id}
-                  onEndReachedThreshold={1}
-                  onEndReached={() => {
-                    page++
-                    console.log(page + ' ' + nextPage);
-                    fetchMore({
-                      variables:{page:page},
-                      updateQuery: (previousResult, { fetchMoreResult }) => {
-                        if (!fetchMoreResult || fetchMoreResult.length === 0) {
-                          return previousResult;
-                        }
-                        return previousResult.buscaVeiculo.edges.concat(fetchMoreResult.buscaVeiculo.edges);
+          {dataArray.map((itemLista,j) => {
+            return(
+              <Query query={queryVeiculos} variables={{page:j+1, limit:this.state.limit, query:this.state.searchBar}} fetchPolicy={'cache-and-network'} key={j}>
+                {({ loading, error, data, fetchMore }) => {
+                  if (loading) return (
+                    <Loading />
+                  )
+                  if (error) return <Text>Erro</Text>;
+                  if (j < data.buscaVeiculo.pageInfo.pages){
+                    return(
+                      <View key={j}>
+                      {data.buscaVeiculo.edges.map((itemLista,k) => {
+                          return (
+                            <Item key={k} node={itemLista.node} onPressItem={() => {this.props.navigation.navigate('Detalhes',{id:itemLista.node._id})}}/>
+                          )
+                        })
                       }
-                    });
-                  }}
-                  renderItem={({item}) => <Item node={item.node} onPressItem={() => {this.props.navigation.navigate('Detalhes',{id:item.node._id})}}/>}
-                />
-              )
-            }}
-          </Query>
-
-        </View>
+                      </View>
+                    )
+                  }
+                  return (null)
+                }}
+              </Query>
+            )
+          })}
+          <View style={{height:20}}></View>
+        </ScrollView>
       </KeyboardAvoidingView>
     );
   }

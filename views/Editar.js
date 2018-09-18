@@ -189,7 +189,6 @@ export default class Editar extends React.Component {
                   >
                   {(updateVeiculo) => (
                     <TouchableOpacity style={styles.button} onPress={() => {
-                      console.log(JSON.stringify(this.state));
                       updateVeiculo({
                         variables:{
                           data:{
@@ -293,7 +292,6 @@ export default class Editar extends React.Component {
             <Mutation mutation={criarVeiculo}>
             {(createVeiculo) => (
               <TouchableOpacity style={styles.button} onPress={() => {
-                console.log(JSON.stringify(this.state));
                 createVeiculo({
                   variables:{
                     data:{

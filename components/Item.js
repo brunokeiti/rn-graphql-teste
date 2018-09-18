@@ -1,7 +1,6 @@
 import React from 'react';
 import { StyleSheet } from 'react-native';
-import { View, Text, TouchableOpacity, Image, Alert } from 'react-native';
-import { NavigationActions } from 'react-navigation';
+import { Text, TouchableOpacity, } from 'react-native';
 
 export default class Item extends React.Component {
   constructor ( props ){
