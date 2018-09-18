@@ -3,6 +3,7 @@ import { StyleSheet, Text, TextInput, View, CheckBox, TouchableOpacity, ScrollVi
 import { NavigationActions, StackActions } from 'react-navigation';
 
 import Header from '../components/Header';
+import Loading from  '../components/Loading';
 
 import ApolloClient from "apollo-boost";
 import { Query, Mutation, ApolloProvider } from "react-apollo";
@@ -114,8 +115,10 @@ export default class Editar extends React.Component {
         {this.state.id != 0 && //Editar
           <Query query={detalhesVeiculo} variables={{id:this.state.id}}>
             {({ loading, error, data }) => {
-              if (loading) return <Text>Loading...</Text>;
-              if (error) return <Text>Erro :(</Text>;
+              if (loading) return (
+                <Loading />
+              )
+              if (error) return <Text>Erro</Text>;
               if (this.state.marca == '' || this.state.marca == null){ this.state.marca = data.veiculo.marca;}
               if (this.state.combustivel == '' || this.state.combustivel == null){ this.state.combustivel = data.veiculo.combustivel;}
               return (
@@ -153,7 +156,9 @@ export default class Editar extends React.Component {
                   <Text style={styles.label}>Tipo Combustível</Text>
                   <Query query={CombustivelLista}>
                   {({ loading, error, data }) => {
-                    if (loading) return <Text>Loading...</Text>;
+                    if (loading) return (
+                      <Loading />
+                    )
                     if (error) return <Text>Erro</Text>;
                     return (
                       <Picker
@@ -235,7 +240,9 @@ export default class Editar extends React.Component {
             <Text style={styles.label}>Marca</Text>
             <Query query={MarcaLista}>
             {({ loading, error, data }) => {
-              if (loading) return <Text>Loading...</Text>;
+              if (loading) return (
+                <Loading />
+              )
               if (error) return <Text>Erro</Text>;
               return (
                 <Picker

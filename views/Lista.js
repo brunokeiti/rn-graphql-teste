@@ -113,7 +113,7 @@ export default class Lista extends React.Component {
               </Query>
             )
           })}
-          <View style={{height:20}}></View>
+          <View style={{height:60}}></View>
         </ScrollView>
       </KeyboardAvoidingView>
     );
@@ -128,7 +128,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   searchBar:{
-    backgroundColor: '#666666',
+    backgroundColor: '#444444',
     alignItems: 'center',
     padding:10,
     paddingTop:0,

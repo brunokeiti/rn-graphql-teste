@@ -56,7 +56,7 @@ export default class Header extends React.Component {
 const styles = StyleSheet.create({
 //barra de cima
 topBar: {
-  backgroundColor: '#666666',
+  backgroundColor: '#444444',
   flexDirection: 'row',
   height:60 + Expo.Constants.statusBarHeight,
   padding:0,

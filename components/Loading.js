@@ -16,6 +16,6 @@ export default class Item extends React.Component {
 
 const styles = StyleSheet.create({
   view: {
-    height:100,
+    margin:5
   },
 });

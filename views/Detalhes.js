@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, ScrollView, KeyboardAvoidingView } from 'react-
 import { NavigationActions } from 'react-navigation';
 
 import Header from '../components/Header';
+import Loading from '../components/Loading';
 
 import ApolloClient from "apollo-boost";
 import { Query, ApolloProvider } from "react-apollo";
@@ -46,8 +47,10 @@ export default class Detalhes extends React.Component {
         <ScrollView contentContainerStyle={{padding:10,paddingTop:5,paddingBottom:20, backgroundColor:'transparent', flexDirection: 'column',}}>
         <Query query={detalhesVeiculo} variables={{id:this.state.id}}>
           {({ loading, error, data }) => {
-            if (loading) return <Text>Loading...</Text>;
-            if (error) return <Text>Erro :(</Text>;
+            if (loading) return (
+              <Loading />
+            )
+            if (error) return <Text>Erro</Text>;
             return (
               <View>
                 <Text style={styles.label}>Marca</Text>
