@@ -75,7 +75,7 @@ export default class Lista extends React.Component {
           <Query query={queryVeiculos} variables={{page:page, limit:this.state.limit, query:this.state.searchBar}} fetchPolicy={'cache-and-network'}>
             {({ loading, error, data, fetchMore }) => {
               if (loading) return <Text>Loading...</Text>;
-              if (error) return <Text>Erro :(</Text>;
+              if (error) return <Text>Erro</Text>;
               //console.log(data.buscaVeiculo.edges);
               return (
                 <FlatList
@@ -90,12 +90,15 @@ export default class Lista extends React.Component {
                         variables:{page:page, limit:this.state.limit, query:this.state.searchBar},
                         updateQuery: (previousResult, { fetchMoreResult }) => {
                           nextPage = fetchMoreResult.buscaVeiculo.edges.hasNextPage;
-                          //fetchMoreResult.buscaVeiculo.edges.concat(previousResult.buscaVeiculo.edges);
-                          console.log(fetchMoreResult.buscaVeiculo.edges);
-                          return fetchMoreResult.buscaVeiculo.edges
+                          var resultadoCombinado = previousResult.buscaVeiculo.edges.concat(fetchMoreResult.buscaVeiculo.edges);
+                          console.log(resultadoCombinado);
+                          return resultadoCombinado
                         }
                       });
-                  }}}
+                    }else{
+                      return null
+                    }
+                  }}
                   renderItem={({item}) => <Item node={item.node} onPressItem={() => {this.props.navigation.navigate('Detalhes',{id:item.node._id})}}/>}
                 />
               )
