@@ -42,7 +42,11 @@ export default class Header extends React.Component {
                 />
               }
               {this.props.rightButton == 'edit' &&
-                <Text style={styles.buttonText}>Editar</Text>
+              <Image
+                source={require('../img/icone_edit.png')}
+                style={styles.topBarIconImage}
+                resizeMode="contain"
+              />
               }
           </TouchableOpacity>
           }
